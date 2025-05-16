@@ -50,16 +50,21 @@ Example effects on scoring with different odds factors:
 The calculator automatically scales the odds bonus proportionally for each scoring system, ensuring a balanced impact across all systems. This means:
 
 - The relative impact of the odds bonus is consistent regardless of which scoring system is used
-- Scoring systems with higher point totals have their odds bonuses scaled down
-- Scoring systems with lower point totals have their odds bonuses scaled up
-- All systems are calibrated so that the odds bonus has a similar relative weight (approximately 20-30% of the score for a perfect prediction)
+- Scoring systems with higher point totals have higher scaling factors to maintain proportional bonus impact
+- All systems are calibrated so that the odds bonus has a similar relative percentage of the score across all systems
 
-For example, with the default odds factor of 1.0:
-- Simple & Sweet: Scaling factor 1.0 (baseline)
-- Eurovision Style: Scaling factor 0.74
-- Positional Proximity: Scaling factor 0.5
-- Top-Heavy Focus: Scaling factor 1.11
-- Top-Heavy Positional Proximity: Scaling factor 0.38
+The scaling factors are designed to ensure that systems with higher base scores (like Top-Heavy Positional Proximity with ~130 points) provide proportionally equivalent bonuses to systems with lower base scores (like Top-Heavy Focus with ~45 points).
+
+Current scaling factors (with the default odds factor of 1.0):
+- Simple & Sweet: Scaling factor 1.0 (baseline, typical score ~50 points)
+- Eurovision Style: Scaling factor 1.4 (typical score ~68 points)
+- Positional Proximity: Scaling factor 2.0 (typical score ~100 points)
+- Top-Heavy Focus: Scaling factor 0.9 (typical score ~45 points)
+- Top-Heavy Positional Proximity: Scaling factor 2.6 (typical score ~130 points)
+
+These factors were adjusted from their previous values to ensure a more consistent proportional impact of the odds bonus across all scoring systems.
+
+The detailed log file now correctly displays the odds scaling factor used for each scoring system, making it easy to understand how bonus points were calculated.
 
 ## Tiebreakers
 
@@ -137,13 +142,14 @@ Example log file excerpt:
 ### 1. Thomas - 18 points
 
 Base Score: 12 points + Odds Bonus: 6 points = 18 total points
+(Odds scaling factor for this scoring system: 1.00)
 
 #### Prediction vs Actual
 
 | Position | Prediction | Actual | Points | Explanation |
 |----------|------------|--------|--------|--------------|
-| 1 | Sweden | Sweden | 5 | +2 points (in top 10), +3 points (exact position), +1.0 bonus (odds: 1.91) |
-| 10 | Malta | Malta | 2 | +2 points (in top 10), +3.8 bonus (odds: 80.0) |
+| 1 | Sweden | Sweden | 5 | +2 points (in top 10), +3 points (exact position), +1.0 bonus (odds: 1.91, scaling: 1.00) |
+| 10 | Malta | Malta | 2 | +2 points (in top 10), +3.8 bonus (odds: 80.0, scaling: 1.00) |
 ...
 
 #### Odds Bonus Details
@@ -158,5 +164,4 @@ Base Score: 12 points + Odds Bonus: 6 points = 18 total points
 ## Odds CSV Format
 
 The odds CSV file should have the following format:
-
 ```
