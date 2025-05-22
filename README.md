@@ -4,7 +4,7 @@ A tool to calculate scores for Eurovision prediction competitions based on vario
 
 ## Features
 
-- **Multiple Scoring Systems**: Implements 7 different scoring systems with varying complexity
+- **Multiple Scoring Systems**: Implements 3 different scoring systems with varying complexity
 - **Standard & Extended Systems**: Choose between systems that only consider the top 10 or also include countries beyond
 - **Flexible Data Loading**: Load predictions from CSV files and actual results from text files
 - **Tiebreaker Logic**: Multiple tiebreaker criteria that can be easily customized
@@ -14,22 +14,18 @@ A tool to calculate scores for Eurovision prediction competitions based on vario
 
 ## Scoring Systems
 
-### Standard Systems (Top 10 Only)
+### Standard System (Top 10 Only)
 
-These systems only award points for countries that finished in the actual top 10. Countries predicted correctly but finishing beyond the top 10 receive no points.
+This system only awards points for countries that finished in the actual top 10. Countries predicted correctly but finishing beyond the top 10 receive no points.
 
 1. **Simple & Sweet**: Basic scoring with 2 points per correct country and 3 points per exact position
-2. **Eurovision Style**: Mimics Eurovision voting (12, 10, 8, 7, ...) for exact position matches
-3. **Positional Proximity**: Points based on how close the guess is to the actual position
-4. **Top-Heavy Focus**: More points for correctly predicting the Top 3 positions
-5. **Top-Heavy Positional Proximity**: Complex system with different point scales based on actual finish tier
 
 ### Extended Systems (Beyond Top 10)
 
 These systems also award points for correctly predicting countries that finished beyond the top 10.
 
-6. **Extended Positional Proximity**: Awards points based on proximity to actual position, including for countries beyond the top 10
-7. **Modified Top-Heavy Proximity**: A less top-heavy version with base points for top 10 countries, plus points for countries beyond top 10 based on proximity
+2. **Positional Proximity Base**: Awards points based on proximity to actual position, including for countries that finished beyond the top 10
+3. **TopHeavyPositionalProximity**: A system with base points for top 10 countries, plus graduated points for all countries based on proximity to actual finishing position
 
 ## Odds-Weighted Bonus
 
@@ -65,20 +61,12 @@ The calculator automatically scales the odds bonus proportionally for each scori
 - Scoring systems with higher point totals have higher scaling factors to maintain proportional bonus impact
 - All systems are calibrated so that the odds bonus has a similar relative percentage of the score across all systems
 
-The scaling factors are designed to ensure that systems with higher base scores (like Top-Heavy Positional Proximity with ~130 points) provide proportionally equivalent bonuses to systems with lower base scores (like Top-Heavy Focus with ~45 points).
-
 Current scaling factors (with the default odds factor of 1.0):
 - Simple & Sweet: Scaling factor 1.0 (baseline, typical score ~50 points)
-- Eurovision Style: Scaling factor 1.4 (typical score ~68 points)
-- Positional Proximity: Scaling factor 2.0 (typical score ~100 points)
-- Top-Heavy Focus: Scaling factor 0.9 (typical score ~45 points)
-- Top-Heavy Positional Proximity: Scaling factor 2.6 (typical score ~130 points)
-- Extended Positional Proximity: Scaling factor 2.0
-- Modified Top-Heavy Proximity: Scaling factor 2.2
+- Positional Proximity Base: Scaling factor 2.0
+- TopHeavyPositionalProximity: Scaling factor 2.2
 
-These factors were adjusted from their previous values to ensure a more consistent proportional impact of the odds bonus across all scoring systems.
-
-The detailed log file now correctly displays the odds scaling factor used for each scoring system, making it easy to understand how bonus points were calculated.
+The detailed log file displays the odds scaling factor used for each scoring system, making it easy to understand how bonus points were calculated.
 
 ## Tiebreakers
 
@@ -96,7 +84,7 @@ python src/main.py --predictions data/predictions.csv --manual-results Sweden Fi
 python src/main.py --predictions data/predictions.csv --results data/results.txt
 
 # Specify which scoring systems to calculate
-python src/main.py --predictions data/predictions.csv --results data/results.txt --systems "Simple & Sweet" "Eurovision Style"
+python src/main.py --predictions data/predictions.csv --results data/results.txt --systems "Simple & Sweet" "Positional Proximity Base"
 
 # Generate a detailed log file with score breakdowns
 python src/main.py --predictions data/predictions.csv --results data/results.txt --log-file logs/detailed_breakdown.md
@@ -170,7 +158,7 @@ Base Score: 12 points + Odds Bonus: 6 points = 18 total points
 | 10 | Malta | Not in Top 10 | 0 | No points |
 ...
 
-## Scoring System: Extended Positional Proximity
+## Scoring System: Positional Proximity Base
 
 ### 1. Thomas - 37 points
 
@@ -183,7 +171,7 @@ Base Score: 12 points + Odds Bonus: 6 points = 18 total points
 ...
 ```
 
-In this example, note how "Standard" systems like "Simple & Sweet" only award points for countries in the top 10, while "Extended" systems like "Extended Positional Proximity" also award points for countries like Finland that finished outside the top 10 (at position 11).
+In this example, note how "Standard" systems like "Simple & Sweet" only award points for countries in the top 10, while "Extended" systems like "Positional Proximity Base" also award points for countries like Finland that finished outside the top 10 (at position 11).
 
 ## Odds CSV Format
 

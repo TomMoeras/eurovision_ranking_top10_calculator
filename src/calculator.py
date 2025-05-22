@@ -5,12 +5,8 @@ from .data_loader import Participant, load_participants, load_actual_results
 from .scoring import (
     ScoringSystem,
     SimpleAndSweet,
-    EurovisionStyle,
-    PositionalProximity,
-    TopHeavyFocus,
-    TopHeavyPositionalProximity,
-    ExtendedPositionalProximity,
-    ModifiedTopHeavyProximity
+    PositionalProximityBase,
+    TopHeavyPositionalProximity
 )
 from .odds_bonus import OddsCalculator
 
@@ -21,12 +17,8 @@ class EurovisionCalculator:
     # Dictionary mapping system names to their classes for easy reference
     AVAILABLE_SYSTEMS = {
         "Simple & Sweet": SimpleAndSweet,
-        "Eurovision Style": EurovisionStyle,
-        "Positional Proximity": PositionalProximity,
-        "Top-Heavy Focus": TopHeavyFocus,
-        "Top-Heavy Positional Proximity": TopHeavyPositionalProximity,
-        "Extended Positional Proximity": ExtendedPositionalProximity,
-        "Modified Top-Heavy Proximity": ModifiedTopHeavyProximity
+        "Positional Proximity Base": PositionalProximityBase,
+        "TopHeavyPositionalProximity": TopHeavyPositionalProximity
     }
     
     def __init__(self, system_names: Optional[List[str]] = None, odds_file: Optional[str] = None, odds_bonus_factor: float = 1.0):
@@ -326,10 +318,6 @@ class EurovisionCalculator:
                     if system_name == "Simple & Sweet":
                         f.write(f"Correct countries: {breakdown.get('correct_countries', 0)} × 2 = {breakdown.get('correct_country_points', 0)} points\n")
                         f.write(f"Exact positions: {breakdown.get('exact_positions', 0)} × 3 = {breakdown.get('exact_position_points', 0)} points\n")
-                    elif system_name == "Eurovision Style":
-                        f.write(f"Points from exact positions: {breakdown.get('position_points', 0)}\n")
-                        if breakdown.get('bonus_for_correct_country', False):
-                            f.write(f"Bonus points for correct countries in wrong positions: {breakdown.get('bonus_countries', 0)} × 1 = {breakdown.get('bonus_points', 0)}\n")
                     
                     f.write("\n")
                 
