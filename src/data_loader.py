@@ -67,7 +67,7 @@ def load_actual_results(results_file: str) -> List[str]:
         results_file: Path to the results file (one country per line, in order)
         
     Returns:
-        List of countries in order of their actual finish (1st to 10th)
+        List of countries in order of their actual finish
     """
     countries = []
     
@@ -76,7 +76,5 @@ def load_actual_results(results_file: str) -> List[str]:
             country = line.strip()
             if country:
                 countries.append(country)
-                if len(countries) >= 10:
-                    break
     
-    return countries[:10]  # Ensure we only return the top 10 
+    return countries  # Return all countries, not just top 10 

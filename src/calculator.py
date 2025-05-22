@@ -8,7 +8,9 @@ from .scoring import (
     EurovisionStyle,
     PositionalProximity,
     TopHeavyFocus,
-    TopHeavyPositionalProximity
+    TopHeavyPositionalProximity,
+    ExtendedPositionalProximity,
+    ModifiedTopHeavyProximity
 )
 from .odds_bonus import OddsCalculator
 
@@ -22,7 +24,9 @@ class EurovisionCalculator:
         "Eurovision Style": EurovisionStyle,
         "Positional Proximity": PositionalProximity,
         "Top-Heavy Focus": TopHeavyFocus,
-        "Top-Heavy Positional Proximity": TopHeavyPositionalProximity
+        "Top-Heavy Positional Proximity": TopHeavyPositionalProximity,
+        "Extended Positional Proximity": ExtendedPositionalProximity,
+        "Modified Top-Heavy Proximity": ModifiedTopHeavyProximity
     }
     
     def __init__(self, system_names: Optional[List[str]] = None, odds_file: Optional[str] = None, odds_bonus_factor: float = 1.0):
@@ -112,9 +116,9 @@ class EurovisionCalculator:
         """Set the actual Eurovision results manually
         
         Args:
-            results: List of countries in order of their actual finish (1st to 10th)
+            results: List of countries in order of their actual finish
         """
-        self.actual_results = results[:10]  # Ensure only top 10
+        self.actual_results = results  # Store all countries, not just top 10
     
     def calculate_scores(self) -> None:
         """Calculate scores for all participants using all registered scoring systems"""

@@ -7,7 +7,9 @@ from .scoring import (
     EurovisionStyle,
     PositionalProximity,
     TopHeavyFocus,
-    TopHeavyPositionalProximity
+    TopHeavyPositionalProximity,
+    ExtendedPositionalProximity,
+    ModifiedTopHeavyProximity
 )
 from .data_loader import Participant, load_participants, load_actual_results
 
@@ -19,6 +21,8 @@ __all__ = [
     'PositionalProximity',
     'TopHeavyFocus',
     'TopHeavyPositionalProximity',
+    'ExtendedPositionalProximity',
+    'ModifiedTopHeavyProximity',
     'Participant',
     'load_participants',
     'load_actual_results'

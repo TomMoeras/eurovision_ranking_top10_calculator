@@ -4,7 +4,8 @@ A tool to calculate scores for Eurovision prediction competitions based on vario
 
 ## Features
 
-- **Multiple Scoring Systems**: Implements 5 different scoring systems with varying complexity
+- **Multiple Scoring Systems**: Implements 7 different scoring systems with varying complexity
+- **Standard & Extended Systems**: Choose between systems that only consider the top 10 or also include countries beyond
 - **Flexible Data Loading**: Load predictions from CSV files and actual results from text files
 - **Tiebreaker Logic**: Multiple tiebreaker criteria that can be easily customized
 - **Extensible Design**: Easy to add new scoring systems by inheriting from the base class
@@ -13,11 +14,22 @@ A tool to calculate scores for Eurovision prediction competitions based on vario
 
 ## Scoring Systems
 
+### Standard Systems (Top 10 Only)
+
+These systems only award points for countries that finished in the actual top 10. Countries predicted correctly but finishing beyond the top 10 receive no points.
+
 1. **Simple & Sweet**: Basic scoring with 2 points per correct country and 3 points per exact position
 2. **Eurovision Style**: Mimics Eurovision voting (12, 10, 8, 7, ...) for exact position matches
 3. **Positional Proximity**: Points based on how close the guess is to the actual position
 4. **Top-Heavy Focus**: More points for correctly predicting the Top 3 positions
 5. **Top-Heavy Positional Proximity**: Complex system with different point scales based on actual finish tier
+
+### Extended Systems (Beyond Top 10)
+
+These systems also award points for correctly predicting countries that finished beyond the top 10.
+
+6. **Extended Positional Proximity**: Awards points based on proximity to actual position, including for countries beyond the top 10
+7. **Modified Top-Heavy Proximity**: A less top-heavy version with base points for top 10 countries, plus points for countries beyond top 10 based on proximity
 
 ## Odds-Weighted Bonus
 
@@ -61,6 +73,8 @@ Current scaling factors (with the default odds factor of 1.0):
 - Positional Proximity: Scaling factor 2.0 (typical score ~100 points)
 - Top-Heavy Focus: Scaling factor 0.9 (typical score ~45 points)
 - Top-Heavy Positional Proximity: Scaling factor 2.6 (typical score ~130 points)
+- Extended Positional Proximity: Scaling factor 2.0
+- Modified Top-Heavy Proximity: Scaling factor 2.2
 
 These factors were adjusted from their previous values to ensure a more consistent proportional impact of the odds bonus across all scoring systems.
 
@@ -99,10 +113,13 @@ python src/main.py --predictions data/predictions.csv --results data/results.txt
 - `--predictions` or `-p`: Path to the CSV file with participant predictions (required)
 - `--results` or `-r`: Path to the file with actual results
 - `--manual-results` or `-m`: Manually specify the actual results as a list of countries
-- `--systems` or `-s`: Choose which scoring systems to use (any combination of: "Simple & Sweet", "Eurovision Style", "Positional Proximity", "Top-Heavy Focus", "Top-Heavy Positional Proximity")
+- `--systems` or `-s`: Choose which scoring systems to use (any combination of the available systems)
 - `--log-file` or `-l`: Generate a detailed log file with score breakdowns for each participant
 - `--odds-file` or `-o`: Path to CSV file with bookmaker odds for calculating bonus points
 - `--odds-factor` or `-f`: Multiplier for odds-based bonus points (default: 1.0). Increase for more emphasis on underdog predictions, decrease for less impact.
+- `--json` or `-j`: Generate a JSON file with all data for analysis (enabled by default)
+- `--no-json`: Disable JSON file generation
+- `--json-dir`: Directory to store the generated JSON file (default: data)
 
 ## Detailed Score Breakdown
 
@@ -116,7 +133,7 @@ The log file generated with the `--log-file` option provides comprehensive detai
 - A summary of correct predictions and their point values
 - Machine-readable JSON data for further analysis
 
-Example log file excerpt:
+### Example log file excerpt:
 
 ```markdown
 # Eurovision Prediction Contest - Detailed Score Breakdown
@@ -149,19 +166,25 @@ Base Score: 12 points + Odds Bonus: 6 points = 18 total points
 | Position | Prediction | Actual | Points | Explanation |
 |----------|------------|--------|--------|--------------|
 | 1 | Sweden | Sweden | 5 | +2 points (in top 10), +3 points (exact position), +1.0 bonus (odds: 1.91, scaling: 1.00) |
-| 10 | Malta | Malta | 2 | +2 points (in top 10), +3.8 bonus (odds: 80.0, scaling: 1.00) |
+| 2 | Finland | Not in Top 10 | 0 | No points |
+| 10 | Malta | Not in Top 10 | 0 | No points |
 ...
 
-#### Odds Bonus Details
+## Scoring System: Extended Positional Proximity
 
-| Country | Bookmaker Odds | Bonus Points |
-|---------|----------------|-------------|
-| Sweden | 1.91 | +1.0 |
-| Malta | 80.0 | +3.8 |
+### 1. Thomas - 37 points
+
+#### Prediction vs Actual
+
+| Position | Prediction | Actual | Points | Explanation |
+|----------|------------|--------|--------|--------------|
+| 1 | Sweden | Sweden (4) | 3 | +3 points (off by 3 positions) |
+| 2 | Finland | Finland (11) | 5 | +5 points (off by 2 positions), (country finished at position 11) |
 ...
 ```
+
+In this example, note how "Standard" systems like "Simple & Sweet" only award points for countries in the top 10, while "Extended" systems like "Extended Positional Proximity" also award points for countries like Finland that finished outside the top 10 (at position 11).
 
 ## Odds CSV Format
 
 The odds CSV file should have the following format:
-```
